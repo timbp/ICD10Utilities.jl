@@ -1,4 +1,4 @@
-module ICD10AMUtils
+module ICD10Utilities
 
 using CSV, TypedTables, DataFrames, Dates, CategoricalArrays
 using FileIO
