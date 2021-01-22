@@ -1,4 +1,4 @@
-function importicdcodes(fname)
+function importicd10amcodes(fname)
   icdcodes = DataFrame(CSV.File(fname))
   icdcodes.Level = Int8.(icdcodes.Level)
   icdcodes.code_id = ICD10AMCode.(icdcodes.code_id)
@@ -23,12 +23,8 @@ function importicdcodes(fname)
   icdcodes.concept_change = passmissing(Date).(icdcodes.concept_change, dtfmt)
   icdcodes.UnacceptPDx = Bool.(icdcodes.UnacceptPDx)
   rename!(lowercase, icdcodes)
-  save(normpath(@__DIR__, "..", "data", "icdcodes.jld2"), Dict("icdcodes" => Table(icdcodes)))
-  global icdcodes = Table(icdcodes)
-end
-
-function loadicdcodes()
-  load(normpath(@__DIR__, "..", "data", "disease.jld2"), "disease")
+  save(normpath(@__DIR__, "..", "data", "icd10amcodes.jld2"), Dict("icd10amcodes" => Table(icdcodes)))
+  global _ICD10AMcodes_ = Table(icdcodes)
 end
 
 function importachicodes(fname)
@@ -48,5 +44,5 @@ function importachicodes(fname)
                           1 => "fatal", 2 => "warning")
   rename!(lowercase, achicodes)
   save(normpath(@__DIR__, "..", "data", "achicodes.jld2"), Dict("achicodes" => Table(achicodes)))
-  global achicodes = Table(achicodes)
+  global _ACHIcodes_ = Table(achicodes)
 end

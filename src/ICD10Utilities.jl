@@ -5,16 +5,20 @@ using FileIO
 
 import Base: isless, show, string, ==
 
-export ICD10AMCode, ACHICode
-export ICDAge
+export ICD10Code
+export ICD10AM, ACHI
+export ICD10AMAge
+export isvalidcode
 
 greet() = print("Hello World!")
 
-struct ICD10AMCode
+abstract type ICD10Code end
+
+struct ICD10AM <: ICD10Code
   ANN::String
   NN::String
 
-  function ICD10AMCode(ANN, NN)
+  function ICD10AM(ANN, NN)
     ann = r"^[[:upper:]][[:digit:]]{2}$"
     nn = r"^[[:digit:]]{1,2}$"
     NN = isnothing(NN) ? "" : NN
@@ -26,51 +30,49 @@ struct ICD10AMCode
   end
 end
 
-function ICD10AMCode(ANNx::String)
+function ICD10AM(ANNx::String)
   if occursin(".", ANNx)
     ANN, NN = split(ANNx, ".")
-    ICD10AMCode(ANN, NN)
+    ICD10AM(ANN, NN)
   else
-    lastindex(ANNx) == 3 ? ICD10AMCode(ANNx, "") :
-    ICD10AMCode(ANNx[1:3], ANNx[4:lastindex(ANNx)])
+    lastindex(ANNx) == 3 ? ICD10AM(ANNx, "") :
+    ICD10AM(ANNx[1:3], ANNx[4:lastindex(ANNx)])
   end
 end
 
-function Base.isless(icd1::ICD10AMCode, icd2::ICD10AMCode)
+function Base.isless(icd1::ICD10Code, icd2::ICD10Code)
   return icd1.ANN < icd2.ANN || icd1.ANN == icd2.ANN && icd1.NN < icd2.NN
 end
 
-Base.isless(str::String, icd::ICD10AMCode) = isless(ICD10AMCode(str), icd)
-Base.isless(icd::ICD10AMCode, str::String) = isless(icd, ICD10AMCode(str))
+Base.isless(str::String, icd::ICD10Code) = isless(str, string(icd))
+Base.isless(icd::ICD10Code, str::String) = isless(string(icd), str)
 
-function (==)(str::String, icd::ICD10AMCode)
-  return occursin(".", str) ? str == string(icd, punct=true) : str == string(icd)
+function (==)(str::String, icd::ICD10Code)
+  return occursin(".", str) ? str == string(icd, punct = true) : str == string(icd, punct=false)
 end
-(==)(icd::ICD10AMCode, str::String) = str == icd
+(==)(icd::ICD10Code, str::String) = str == icd
 
-# Base.string(icd::ICD10AMCode) = icd.ANN * icd.NN
-function Base.string(icd::ICD10AMCode; punct=false)
+function Base.string(icd::ICD10Code; punct = true)
   return punct ? icd.ANN * "." * icd.NN : icd.ANN * icd.NN
 end
 
-Base.show(io::IO, icd::ICD10AMCode) = print(io, icd.ANN * "." * icd.NN)
+Base.show(io::IO, icd::ICD10Code) = print(io, icd.ANN * "." * icd.NN)
 
-function isvalidcode(code::ICD10AMCode)
-  isdefined(ICD10AMUtils, :icdcodes) ||
-    throw(ErrorException("You need to import the ICD10AM/ACHI electronic code lists (obtained from IHPA) to use validation"))
-  return code in icdcodes.code_id && icdcodes.valid[icdcodes.code_id .== code][]
-end
-function isvalidcode(code::ACHICode)
-  isdefined(ICD10AMUtils, :achiodes) ||
-    throw(ErrorException("You need to import the ICD10AM/ACHI electronic code lists (obtained from IHPA) to use validation"))
-  return code in achicodes.code_id && achicodes.valid[achicodes.code_id .== achi][]
+function isvalidcode(icd::ICD10Code, validcodes)
+  return icd in validcodes
 end
 
-struct ACHICode
+function isvalidcode(code::ICD10AM)
+  isdefined(ICD10Utilities, :_ICD10AMcodes_) ||
+    throw(ErrorException("You need to import the ICD-10-AM/ACHI electronic code lists (obtained from Independent Hospital Pricing Authority at https://ar-drg.laneprint.com.au/) to use validation"))
+  return code in _ICD10AMcodes_.code_id && _ICD10AMcodes_.valid[_ICD10AMcodes_.code_id.==code][]
+end
+
+struct ACHI
   NNNNN::String
   NN::String
 
-  function ACHICode(NNNNN, NN)
+  function ACHI(NNNNN, NN)
     nnnnn = r"^[[:digit:]]{5}$"
     nn = r"^[[:digit:]]{1,2}$"
     (occursin(nnnnn, NNNNN) && occursin(nn, NN)) ||
@@ -79,42 +81,44 @@ struct ACHICode
   end
 end
 
-function ACHICode(NNNNNx::String)
+function ACHI(NNNNNx::String)
   if occursin("-", NNNNNx)
     NNNNN, NN = split(NNNNNx, "-")
-    ACHICode(NNNNN, NN)
+    ACHI(NNNNN, NN)
   else
-    lastindex(NNNNNx) == 7 ? ACHICode(NNNNNx, "") :
-    ACHICode(NNNNNx[1:5], NNNNNx[6:lastindex(NNNNNx)])
+    ACHI(NNNNNx[1:5], NNNNNx[6:lastindex(NNNNNx)])
   end
 end
 
-(==)(str::String, achi::ACHICode) = occursin("-", str) ? str == string(achi, punct=true) : str == string(achi)
-(==)(achi::ACHICode, str::String) = str == achi
-
-function (==)(str::String, achi::ACHICode)
-  return occursin("-", str) ? str == string(achi, punct=true) : str == string(achi)
+function (==)(str::String, achi::ACHI)
+  occursin("-", str) ? str == string(achi, punct = true) : str == string(achi; punct=false)
 end
-(==)(achi::ACHICode, str::String) = str == achi
+(==)(achi::ACHI, str::String) = str == achi
 
-function Base.string(achi::ACHICode; punct=false)
+function Base.string(achi::ACHI; punct = true)
   return punct ? achi.NNNNN * "-" * achi.NN : achi.NNNNN * achi.NN
 end
 
-Base.show(io::IO, achi::ACHICode) = print(io, achi.NNNNN * "-" * achi.NN)
+Base.show(io::IO, achi::ACHI) = print(io, achi.NNNNN * "-" * achi.NN)
 
-struct ICDAge
+function isvalidcode(achi::ACHI)
+  isdefined(ICD10AMUtilities, :_ACHIcodes_) ||
+    throw(ErrorException("You need to import the ICD10AM/ACHI electronic code lists (obtained from Independent Hospital Pricing Authority at https://ar-drg.laneprint.com.au/) to use validation"))
+  return code in _ACHIcodes_.code_id && _ACHIcodes_.valid[_ACHIcodes_.code_id.==achi][]
+end
+
+struct ICD10AMAge
   agecode::Int16
 
-  function ICDAge(age)
+  function ICD10AMAge(age)
     return (age in 0:6 || age in 11:13 || age in 101:111 || age in 201:324) ? new(age) :
            throw(ErrorException("Invalid age code"))
   end
 end
 
-ICDAge(age::String) = ICDAge(parse(Int, age))
+ICD10AMAge(age::String) = ICD10AMAge(parse(Int, age))
 
-function Base.show(io::IO, age::ICDAge)
+function Base.show(io::IO, age::ICD10AMAge)
   if age.agecode in 0:6
     print(io, string(age.agecode) * " days")
   elseif age.agecode in 11:13
@@ -126,20 +130,13 @@ function Base.show(io::IO, age::ICDAge)
   end
 end
 
-Base.isless(age::ICDAge, age2::ICDAge) = isless(age.agecode, age2.agecode)"), "icdcodes")
+function __init__()
+  if isfile(normpath(@__DIR__, "..", "data", "icd10amcodes.jld2"))
+    global _ICD10AMcodes_ = load(normpath(@__DIR__, "..", "data", "icd10amcodes.jld2"), "icd10amcodes")
   end
   if isfile(normpath(@__DIR__, "..", "data", "achicodes.jld2"))
-    global achicodes = load(normpath(@__DIR__, "..", "data", "achicodes.jld2"), "achicodes")
-  end
-end
-
-end # module
-  if isfile(normpath(@__DIR__, "..", "data", "icdcodes.jld2"))
-    global icdcodes = load(normpath(@__DIR__, "..", "data", "icdcodes.jld2"), "icdcodes")
-  end
-  if isfile(normpath(@__DIR__, "..", "data", "achicodes.jld2"))
-    global achicodes = load(normpath(@__DIR__, "..", "data", "achicodes.jld2"),
-                            "achicodes")
+    global _ACHIcodes_ =
+      load(normpath(@__DIR__, "..", "data", "achicodes.jld2"), "achicodes")
   end
 end
 
