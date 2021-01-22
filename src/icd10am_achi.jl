@@ -4,15 +4,19 @@ struct ICD10AM <: ICD10Code
   NN::String
 
   function ICD10AM(ANN, NN)
-    ann = r"^[[:upper:]][[:digit:]]{2}$"
-    nn = r"^[[:digit:]]{1,2}$"
-    NN = isnothing(NN) ? "" : NN
-    occursin(ann, ANN) ||
-      throw(DomainError(ANN, "Must follow pattern `ANN[.][N[N]]` where A is upper case letter, N is decimal digit, and parts in brackets are optional"))
-    (NN == "" || occursin(nn, NN)) ||
-      throw(DomainError(NN, "Must follow pattern `ANN[.][N[N]]` where A is upper case letter, N is decimal digit, and parts in brackets are optional"))
-    return new(ANN, NN)
+    validicd10format(ANN, NN) && return new(ANN, NN)
   end
+end
+
+function validicd10format(ANN, NN)
+  ann = r"^[[:upper:]][[:digit:]]{2}$"
+  nn = r"^[[:digit:]]{1,2}$"
+  NN = isnothing(NN) ? "" : NN
+  occursin(ann, ANN) ||
+    throw(DomainError(ANN, "Must follow pattern `ANN[.][N[N]]` where A is upper case letter, N is decimal digit, and parts in brackets are optional"))
+  (NN == "" || occursin(nn, NN)) ||
+    throw(DomainError(NN, "Must follow pattern `ANN[.][N[N]]` where A is upper case letter, N is decimal digit, and parts in brackets are optional"))
+  return true
 end
 
 function ICD10AM(ANNx::String)
@@ -25,25 +29,7 @@ function ICD10AM(ANNx::String)
   end
 end
 
-## ICD10AM Base functions #####
-function Base.isless(icd1::ICD10Code, icd2::ICD10Code)
-  return icd1.ANN < icd2.ANN || icd1.ANN == icd2.ANN && icd1.NN < icd2.NN
-end
-
-Base.isless(str::String, icd::ICD10Code) = isless(str, string(icd))
-Base.isless(icd::ICD10Code, str::String) = isless(string(icd), str)
-
-function (==)(str::String, icd::ICD10Code)
-  return occursin(".", str) ? str == string(icd, punct = true) : str == string(icd, punct=false)
-end
-(==)(icd::ICD10Code, str::String) = str == icd
-
-function Base.string(icd::ICD10Code; punct = true)
-  return punct ? icd.ANN * "." * icd.NN : icd.ANN * icd.NN
-end
-
-Base.show(io::IO, icd::ICD10Code) = print(io, icd.ANN * "." * icd.NN)
-
+ICD10AM(icd::T) where T <: ICD10Code = ICD10AM(icd.ANN, icd.NN)
 
 ## ACHI #####
 struct ACHI

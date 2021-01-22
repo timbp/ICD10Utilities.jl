@@ -7,12 +7,15 @@ import Base: isless, show, string, ==
 
 export ICD10Code
 export ICD10AM, ACHI
+export ICD10, ICD10CA, ICD10CM, ICD10GM
 export ICD10AMAge
 export isvalidcode
 
 abstract type ICD10Code end
 
+include("icd10basefns.jl")
 include("icd10am_achi.jl")
+include("othericd10.jl")
 
 function __init__()
   if isfile(normpath(@__DIR__, "..", "data", "icd10amcodes.jld2"))
