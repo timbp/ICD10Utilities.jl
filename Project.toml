@@ -1,7 +1,7 @@
 name = "ICD10Utilities"
 uuid = "a5155d9d-3c76-4eba-bc5b-258230ab014d"
 authors = ["Tim Badgery-Parker <tim.badgery-parker@mq.edu.au>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -10,6 +10,7 @@ DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+Missings = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
 TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 
 [compat]
@@ -18,5 +19,6 @@ CategoricalArrays = "0.9"
 DataFrames = "0.22"
 FileIO = "1.4"
 JLD2 = "0.3"
+Missings = "0.4"
 TypedTables = "1.2"
 julia = "1.5"
