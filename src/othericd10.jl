@@ -1,41 +1,137 @@
-# Canadian ICD-10-CA
-struct ICD10CA <: ICD10Code
-  ANN::String
-  NN::String
+for t in (:ICD10AM, :ICD10CA, :ICD10CM, :ICD10GM)
+  @eval begin
+    struct $t <: ICD10Code
+      ANN::String
+      NN::String
+    end
+
+    function $t(ANNx::String, punct = true, validateinput = false)
+      if validateinput
+        validicd10input(ANNx, punct) || throw(
+          DomainError(
+            (ANNx, punct),
+            "ICD-10 codes must have format `ANN[.][N[N]], where `A` is a letter A-Z, `N` is a decimal digit, and parts in brackets are optional",
+          ),
+        )
+      end
+      ANN = SubString(ANNx, 1:3)
+      NN = punct ? SubString(ANNx, 5:lastindex(ANNx)) : SubString(ANNx, 4:lastindex(ANNx))
+      $t(ANN, NN)
+    end
+
+    $t(icd::T) where {T<:ICD10Code} = $t(icd.ANN, icd.NN)
+  end
 end
 
-function ICD10CA(ANNx::String)
-  ANN = SubString(ANNx, 1:3)
-  NN = occursin(".", ANNx) ? SubString(ANNx, 5:lastindex(ANNx)) :
-       SubString(ANNx, 4:lastindex(ANNx))
-  return validicd10format(ANN, NN) && ICD10CA(ANN, NN)
-end
-ICD10CA(icd::T) where {T<:ICD10Code} = ICD10CA(icd.ANN, icd.NN)
+"""
+    ICD10AM
 
-# US ICD-10-CM
-struct ICD10CM <: ICD10Code
-  ANN::String
-  NN::String
-end
+Australian version of ICD-10
+"""
+ICD10AM
 
-function ICD10CM(ANNx::String)
-  ANN = SubString(ANNx, 1:3)
-  NN = occursin(".", ANNx) ? SubString(ANNx, 5:lastindex(ANNx)) :
-       SubString(ANNx, 4:lastindex(ANNx))
-  return validicd10format(ANN, NN) && ICD10CM(ANN, NN)
-end
-ICD10CM(icd::T) where {T<:ICD10Code} = ICD10CM(icd.ANN, icd.NN)
+"""
+    ICD10CA
 
-# German ICD-10-GM
-struct ICD10GM <: ICD10Code
-  ANN::String
-  NN::String
-end
+Canadian version of ICD-10
+"""
+    ICD10CA
 
-function ICD10GM(ANNx::String)
-  ANN = SubString(ANNx, 1:3)
-  NN = occursin(".", ANNx) ? SubString(ANNx, 5:lastindex(ANNx)) :
-       SubString(ANNx, 4:lastindex(ANNx))
-  return validicd10format(ANN, NN) && ICD10GM(ANN, NN)
-end
-ICD10GM(icd::T) where {T<:ICD10Code} = ICD10GM(icd.ANN, icd.NN)
+"""
+    ICD10CM
+
+United States version of ICD-10
+"""
+    ICD10CM
+
+"""
+    ICD10GM
+
+German version of ICD-10
+"""
+    ICD10GM
+
+"""
+    ICD10AM(ANNx::String, punct=true, validateinput=false)
+
+Create an Australian ICD-10-AM  code from a string.
+
+If `punct=false` then the string is assumed not to contain a .
+
+If `validateinput=true` then the input format is checked using a regex. this
+takes 2–3 times as long as not validating.
+"""
+ICD10AM(ANNx::String, punct = true, validachiinput = false)
+
+"""
+    ICD10CA(ANNx::String, punct=true, validateinput=false)
+
+Create a Canadian ICD-10-CA  code from a string.
+
+If `punct=false` then the string is assumed not to contain a .
+
+If `validateinput=true` then the input format is checked using a regex. this
+takes 2–3 times as long as not validating.
+"""
+ICD10CA(ANNx::String, punct = true, validachiinput = false)
+
+"""
+    ICD10CM(ANNx::String, punct=true, validateinput=false)
+
+Create a United States ICD-10-CM  code from a string.
+
+If `punct=false` then the string is assumed not to contain a .
+
+If `validateinput=true` then the input format is checked using a regex. this
+takes 2–3 times as long as not validating.
+"""
+ICD10CM(ANNx::String, punct = true, validachiinput = false)
+
+"""
+    ICD10GM(ANNx::String, punct=true, validateinput=false)
+
+Create a German ICD-10-GM  code from a string.
+
+If `punct=false` then the string is assumed not to contain a .
+
+If `validateinput=true` then the input format is checked using a regex. this
+takes 2–3 times as long as not validating.
+"""
+ICD10GM(ANNx::String, punct = true, validachiinput = false)
+
+"""
+    ICD10AM(icd::T) where {T<:ICD10Code}
+
+Convert ICD-10 code to Australian ICD-10-AM.
+
+Note this just changes the type of the code. It does not do any checking or
+translating of concepts between versions.
+"""
+ICD10AM(icd::T) where {T<:ICD10Code}
+"""
+    ICD10CA(icd::T) where {T<:ICD10Code}
+
+Convert ICD-10 code to Canadian ICD-10-CA.
+
+Note this just changes the type of the code. It does not do any checking or
+translating of concepts between versions.
+"""
+ICD10CA(icd::T) where {T<:ICD10Code}
+"""
+    ICD10CM(icd::T) where {T<:ICD10Code}
+
+Convert ICD-10 code to United States ICD-10-CM.
+
+Note this just changes the type of the code. It does not do any checking or
+translating of concepts between versions.
+"""
+ICD10CM(icd::T) where {T<:ICD10Code}
+"""
+    ICD10GM(icd::T) where {T<:ICD10Code}
+
+Convert ICD-10 code to German ICD-10-GM.
+
+Note this just changes the type of the code. It does not do any checking or
+translating of concepts between versions.
+"""
+ICD10GM(icd::T) where {T<:ICD10Code}
