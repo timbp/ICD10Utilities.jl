@@ -1,7 +1,7 @@
 # ICD10Utilities.jl
 
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://timbp.github.io/ICD10Utilities.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://timbp.github.io/ICD10Utilities.jl/dev)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://timbp.github.io/ICD10Utilities.jl/stable)
 
 
 The _International Classification of Diseases and Other Health Related Problems, Tenth Revision_ (ICD-10)
