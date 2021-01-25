@@ -6,4 +6,5 @@ makedocs(
 
 deploydocs(
     repo = "github.com/timbp/ICD10Utilities.jl.git",
+    devbranch = "main",
 )
