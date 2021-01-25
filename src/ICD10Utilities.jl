@@ -5,7 +5,7 @@ using FileIO
 
 import Base: isless, show, string, ==, convert, startswith
 
-export ICD10Code
+export AbstractICD10
 export ICD10
 export ICD10AM, ACHI
 export ICD10CA, ICD10CM, ICD10GM
@@ -13,9 +13,9 @@ export ICD10AMAge
 export icd3
 export isvalidcode
 
-abstract type ICD10Code end
+abstract type AbstractICD10 end
 
-Broadcast.broadcastable(icdcode::ICD10Code) = Ref(icdcode)
+Broadcast.broadcastable(icdcode::AbstractICD10) = Ref(icdcode)
 
 function validicd10input(ANNx::String, punct = true)
   icdfmt =

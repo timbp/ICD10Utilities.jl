@@ -15,8 +15,9 @@ purchase from the
 
 If you have access to the ICD-10-AM/ACHI electronic code lists (from IHPA), you
 can import them into this package (see
-[`ICD10Utilities.importicd10amcodes`](@ref) ) and use them for validating codes
-and conducting other queries (e.g. look up description from a code).
+[`ICD10Utilities.importicd10amcodes`](@ref) and
+[`ICD10Utilities.importachicodes`](@ref) ) and use them for validating codes and
+conducting other queries (e.g. look up description from a code).
 
 Once imported, the codes are available in global variables
 [ICD-10-AM code list](@ref) and [ACHI code list](@ref).

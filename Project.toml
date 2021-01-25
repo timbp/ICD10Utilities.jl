@@ -1,7 +1,7 @@
 name = "ICD10Utilities"
 uuid = "a5155d9d-3c76-4eba-bc5b-258230ab014d"
 authors = ["Tim Badgery-Parker <tim.badgery-parker@mq.edu.au>"]
-version = "0.1.2"
+version = "0.1.3"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"

@@ -16,10 +16,10 @@ health data. This is not a package for clinical coding.
 ## ICD-10
 
 The _International Classification of Diseases and Related Health Problems_ is
-more than 100 years old. The tenth revision, _International Classification of
-Diseases and Related Health Problems, 10th Revision_ (ICD-10) was first released
-by the World Health Organization (WHO) in 1992. It is used for classifying
-diagnoses (and place and cause) in health data.
+more than 100 years old. The tenth revision,
+_International Classification of and Related Health Problems, 10th Revision_ (ICD-10)
+was first released by the World Health Organization (WHO) in 1992. It is used
+for classifying diagnoses in health data.
 
 Some countries have developed customised versions under licence from WHO. These
 include Australia (ICD-10-AM), Canada (ICD-10-CA), the United States
@@ -43,14 +43,6 @@ be necessary as in most cases codes will be obtained from a health database and
 so will already have been validated. It is much slower to validate the input
 format.
 
-ICD10 codes can be compared lexicographically using `<`, `>`, or `isless`.
-
-Codes of the same type can be tested for equality (e.g.
-`ICD10AM("A00.1") == ICD10AM("A001", false)`), but codes of different types
-cannot be directly compared as there is no guarantee that the same code in
-different versions indicates the same concept. You can convert to `String` to
-compare codes of different types.
-
 ## Types
 
 ```@docs
@@ -65,15 +57,15 @@ ICD10GM
 
 ```@docs
 ICD10(::String)
-ICD10(::ICD10Code)
+ICD10(::AbstractICD10)
 ICD10AM(::String)
-ICD10AM(::ICD10Code)
+ICD10AM(::AbstractICD10)
 ICD10CA(::String)
-ICD10CA(::ICD10Code)
+ICD10CA(::AbstractICD10)
 ICD10CM(::String)
-ICD10CM(::ICD10Code)
+ICD10CM(::AbstractICD10)
 ICD10GM(::String)
-ICD10GM(::ICD10Code)
-Base.string(::ICD10Code)
-isvalidcode(icd::ICD10Code, validcodes)
+ICD10GM(::AbstractICD10)
+Base.string(::AbstractICD10)
+isvalidcode(icd::AbstractICD10, validcodes)
 ```

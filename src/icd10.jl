@@ -4,7 +4,7 @@
 
 An ICD-10 code.
 """
-struct ICD10 <: ICD10Code
+struct ICD10 <: AbstractICD10
   ANN::String
   NN::String
 end
@@ -37,10 +37,10 @@ function ICD10(ANNx::String, punct = true, validateinput = false)
 end
 
 """
-    ICD10(icd::T) where T <: ICD10Code
+    ICD10(icd::T) where T <: AbstractICD10
 
 Create an ICD-10 code from another type of ICD-10 code.
 
 Note this just changes the type. It does not translate concepts between versions.
 """
-ICD10(icd::T) where {T<:ICD10Code} = ICD10(icd.ANN, icd.NN)
+ICD10(icd::T) where {T<:AbstractICD10} = ICD10(icd.ANN, icd.NN)
