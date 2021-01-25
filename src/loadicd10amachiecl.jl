@@ -51,7 +51,7 @@ function importicd10amcodes(fname)
     validforcoding = valid,
     australiancode = aust_code,
     description = ascii_desc,
-    shortdescription = ascii_desc_short,
+    shortdescription = ascii_short_desc,
     effectivefrom = effective_from,
     inactive = inactive,
     reactivated = reactivated,

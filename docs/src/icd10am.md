@@ -66,6 +66,8 @@ dagger            | dagger         | Is this a dagger code
 asterisk          | asterisk       | Is this an asterisk code
 validforcoding    | valid          | Can this code be used in coding, or is it just a placeholder for subcodes
 australiancode    | australian     | Is this an Australian code (not part of WHO ICD-10)
+description       | ascii_desc     | Description of the coded concept
+shortdescription  | ascii_short_desc | Abbreviated description
 effectivefrom     | effective\_from| Date the code came into use
 inactive          | inactive       | Date when code became inactive
 reactivated       | reactivated    | Date when code was reactivated
