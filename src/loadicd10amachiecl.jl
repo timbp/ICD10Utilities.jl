@@ -43,7 +43,7 @@ function importicd10amcodes(fname)
   Morph_Code = Bool.(icdcodes.Morph_Code)
   concept_change = passmissing(Date).(icdcodes.concept_change, dtfmt)
   UnacceptPDx = Bool.(icdcodes.UnacceptPDx)
-  global _ICD10AMcodes_ = Table(;
+  global ICD10AMcodes = Table(;
     level = Level,
     icdcode = code_id,
     dagger = dagger,
@@ -67,7 +67,7 @@ function importicd10amcodes(fname)
   )
   save(
     normpath(@__DIR__, "..", "data", "icd10amcodes.jld2"),
-    Dict("icd10amcodes" => Table(_ICD10AMcodes_)),
+    Dict("icd10amcodes" => Table(ICD10AMcodes)),
   )
 end
 
@@ -109,7 +109,7 @@ function importachicodes(fname)
     1 => "fatal",
     2 => "warning",
   )
-  global _ACHIcodes_ = Table(;
+  global ACHIcodes = Table(;
     achicode = Code_id,
     block = Block,
     description = ascii_desc,
@@ -124,6 +124,6 @@ function importachicodes(fname)
   )
   save(
     normpath(@__DIR__, "..", "data", "achicodes.jld2"),
-    Dict("achicodes" => Table(_ACHIcodes_)),
+    Dict("achicodes" => Table(ACHIcodes)),
   )
 end

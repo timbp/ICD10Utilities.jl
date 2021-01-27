@@ -18,9 +18,7 @@ can import them into this package (see
 [`ICD10Utilities.importicd10amcodes`](@ref) and
 [`ICD10Utilities.importachicodes`](@ref) ) and use them for validating codes and
 conducting other queries (e.g. look up description from a code).
-
-Once imported, the codes are available in global variables
-[ICD-10-AM code list](@ref) and [ACHI code list](@ref).
+See [ICD-10-AM code list](@ref) and [ACHI code list](@ref).
 
 ## Functions
 
@@ -50,7 +48,7 @@ Base.string(::ACHI)
 
 ### ICD-10-AM code list
 
-    ICD10Utilities._ICD10AMcodes_
+    ICD10Utilities.ICD10AMcodes
 
 The imported ICD-10-AM electronic code list.
 
@@ -58,7 +56,7 @@ This is a [`TypedTable`](https://typedtables.juliadata.org/stable/) created from
 the `disease.txt` table in the electronic code lists. Some variable names are
 changed.
 
-\_ICD10AMcodes\_  | disease.txt    | description
+ICD10AMcodes      | disease.txt    | description
 ------------------|----------------|--------------------------------------------------------------------------
 level             | Level          | Number of digits in the code (3, 4, 5)
 icdcode           | code\_id       | ICD-10-AM code
@@ -66,8 +64,8 @@ dagger            | dagger         | Is this a dagger code
 asterisk          | asterisk       | Is this an asterisk code
 validforcoding    | valid          | Can this code be used in coding, or is it just a placeholder for subcodes
 australiancode    | australian     | Is this an Australian code (not part of WHO ICD-10)
-description       | ascii_desc     | Description of the coded concept
-shortdescription  | ascii_short_desc | Abbreviated description
+description       | ascii\_desc     | Description of the coded concept
+shortdescription  | ascii\_short\_desc | Abbreviated description
 effectivefrom     | effective\_from| Date the code came into use
 inactive          | inactive       | Date when code became inactive
 reactivated       | reactivated    | Date when code was reactivated
@@ -83,7 +81,7 @@ unacceptpdx       | UnacceptPDx    | Can this code be used as a principal diagno
 
 ### ACHI code list
 
-    ICD10Utilities._ACHIcodes_
+    ICD10Utilities.ACHIcodes
 
 The imported ACHI electronic code list.
 
@@ -91,7 +89,7 @@ This is a [`TypedTable`](https://typedtables.juliadata.org/stable/) created from
 the `interven.txt` table in the electronic code lists. Some variable names are
 changed.
 
-\_ACHIcodes\_    | interven.txt       | description
+ACHIcodes        | interven.txt       | description
 -----------------|--------------------|-------------------------------------------
 achicode         | Code\_id           | ACHI code
 block            | Block              | ACHI block that includes the code

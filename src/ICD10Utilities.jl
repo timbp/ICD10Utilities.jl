@@ -13,6 +13,8 @@ export ICD10AMAge
 export icd3
 export isvalidcode
 
+export ICD10AMcodes, ACHIcodes
+
 abstract type AbstractICD10 end
 
 Broadcast.broadcastable(icdcode::AbstractICD10) = Ref(icdcode)
@@ -29,16 +31,5 @@ include("icd10fns.jl")
 include("othericd10.jl")
 include("achi.jl")
 include("icd10amfns.jl")
-
-function __init__()
-  if isfile(normpath(@__DIR__, "..", "data", "icd10amcodes.jld2"))
-    global _ICD10AMcodes_ =
-      load(normpath(@__DIR__, "..", "data", "icd10amcodes.jld2"), "icd10amcodes")
-  end
-  if isfile(normpath(@__DIR__, "..", "data", "achicodes.jld2"))
-    global _ACHIcodes_ =
-      load(normpath(@__DIR__, "..", "data", "achicodes.jld2"), "achicodes")
-  end
-end
 
 end # module

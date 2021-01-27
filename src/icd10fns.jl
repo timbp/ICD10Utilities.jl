@@ -2,7 +2,7 @@
 
 Base.convert(::Type{T}, x::AbstractICD10) where {T<:AbstractICD10} = T(x)
 Base.convert(::Type{T}, x::String) where {T<:AbstractICD10} = T(x)
-Base.convert(::Type{String}, x::T, punct=true) where {T<:AbstractICD10} = string(x, punct)
+Base.convert(::Type{String}, x::T, punct = true) where {T<:AbstractICD10} = string(x, punct)
 
 # Note these comparisons are lexicographic only; we are not implying underlying
 # concepts are equal if codes come from different versions.
@@ -23,7 +23,6 @@ Base.isless(icd::AbstractICD10, str::String) = isless(string(icd), str)
     string(icdcode, false)
 
 Convert an ICD10 code to a string. Output will have punctuation unless `false` is passed as second argument.
-
 """
 Base.string(icd::AbstractICD10, punct = true) =
   punct ? icd.ANN * "." * icd.NN : icd.ANN * icd.NN

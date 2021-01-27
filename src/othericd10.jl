@@ -35,21 +35,21 @@ ICD10AM
 
 Canadian version of ICD-10
 """
-    ICD10CA
+ICD10CA
 
 """
     ICD10CM
 
 United States version of ICD-10
 """
-    ICD10CM
+ICD10CM
 
 """
     ICD10GM
 
 German version of ICD-10
 """
-    ICD10GM
+ICD10GM
 
 """
     ICD10AM(ANNx::String, punct=true, validateinput=false)

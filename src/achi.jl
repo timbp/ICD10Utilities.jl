@@ -53,7 +53,8 @@ Convert an ACHI code to a string.
 
 If `punct = false` then omit the hyphen ("NNNNNNN" instead of "NNNNN-NN")
 """
-Base.string(achi::ACHI, punct = true) = punct ? achi.NNNNN * "-" * achi.NN : achi.NNNNN * achi.NN
+Base.string(achi::ACHI, punct = true) =
+  punct ? achi.NNNNN * "-" * achi.NN : achi.NNNNN * achi.NN
 
 Base.show(io::IO, achi::ACHI) = print(io, achi.NNNNN * "-" * achi.NN)
 
@@ -97,3 +98,36 @@ function Base.show(io::IO, age::ICD10AMAge)
     print(io, string(age.agecode - 200) * " years")
   end
 end
+
+## ACHI functions #####
+"""
+    isvalidcode(code:ACHI)
+
+Takes an ACHI code and checks it is in the electronic code lists and valid.
+
+Electronic code lists can be obtained from the [Independent Hospital Pricing
+Authority](https://www.ihpa.gov.au/what-we-do/icd-10-am-achi-acs-classification),
+and need to be imported into the local package before this function
+can be used. See [`importachicodes`](@ref)
+
+"Valid" codes are those that exist.
+"""
+function isvalidcode(achi::ACHI)
+  isdefined(ICD10Utilities, :ACHIcodes) ||
+    isfile(normpath(@__DIR__, "..", "data", "achicodes.jld2")) ||
+    throw(
+      ErrorException(
+        "You need to import the ICD10AM/ACHI electronic code lists (obtained from Independent Hospital Pricing Authority at https://ar-drg.laneprint.com.au/) to use validation. Run `importachicodes(<filename>` where `<filename>` is the path to the `interven.txt` file from IHPA.",
+      ),
+    )
+  if !isdefined(ICD10Utilities, :ACHIcodes)
+    global ACHIcodes = load(normpath(@__DIR__, "..", "data", "achicodes.jld2"), "achicodes")
+  end
+
+  f(achi, codelist = ACHIcodes)::Bool = achi in codelist.achicode
+
+  return f(achi)
+end
+## TO DO #####
+# Need a method that takes a date and checks if the code is inactive at that date.
+# Also want to check if a code is valid in a particular version
