@@ -6,13 +6,11 @@ An ICD-10 code.
 """
 struct ICD10 <: AbstractICD10
   level::Int8
-  ANN::NTuple{3,UInt8}
-  N4::UInt8
-  N5::UInt8
+  ANN::NTuple{5,UInt8}
 end
 
 """
-    ICD10(ANNx::String, alidateinput = false)
+    ICD10(ANNx::String, validateinput = false)
 
 Create an ICD-10 code from a string.
 
@@ -32,16 +30,15 @@ function ICD10(str, validateinput = false)
       ),
     )
   end
-  ANN = str[1:3]
   level = punct ? length(str) - 1 : length(str)
   ch4 = punct ? 5 : 4
 
   if level == 3
-    return ICD10(level, NTuple{3,UInt8}.(ANN), UInt8(0), UInt8(0))
+    return ICD10(level, (NTuple{3,UInt8}.(str)..., UInt8(0), UInt8(0)))
   elseif level == 4
-    return ICD10(level, NTuple{3,UInt8}.(ANN), UInt8(str[ch4]), UInt8(0))
+    return ICD10(level, (NTuple{3,UInt8}.(str)..., UInt8(str[ch4]), UInt8(0)))
   elseif level == 5
-    return ICD10(level, NTuple{3,UInt8}.(ANN), UInt8(str[ch4]), UInt8(str[ch4+1]))
+    return ICD10(level, (NTuple{3,UInt8}.(ANN)..., UInt8(str[ch4]), UInt8(str[ch4+1]))
   else
     throw(DomainError(str, "ICD-10 codes should be 3-5 characters excluding the period"))
   end
