@@ -1,36 +1,32 @@
-## AbstractICD10 Base functions #####
+Base.convert(::Type{T}, x::AbstractString) where {T<:AbstractICD10} = T(x)
 
-Base.convert(::Type{T}, x::AbstractICD10) where {T<:AbstractICD10} = T(x)
-Base.convert(::Type{T}, x::String) where {T<:AbstractICD10} = T(x)
-Base.convert(::Type{String}, x::T, punct = true) where {T<:AbstractICD10} = string(x, punct)
+Base.print(io::IO, icd::T, punct = ICDOPTS[:punct]) where {T<:AbstractICD10} =
+  if punct
+    if icd.level == 3
+      write(io, Ref(icd.ANN), '.')
+    elseif icd.level == 4
+      write(io, Ref(icd.ANN), '.', Ref(icd.N4))
+    elseif icd.level == 5
+      write(io, Ref(icd.ANN), '.', Ref(icd.N4), Ref(icd.N5))
+    end
+  else
+    if icd.level == 3
+      write(io, Ref(icd.ANN))
+    elseif icd.level == 4
+      write(io, Ref(icd.ANN), Ref(icd.N4))
+    elseif icd.level == 5
+      write(io, Ref(icd.ANN), Ref(icd.N4), Ref(icd.N5))
+    end
+  end
 
-# Note these comparisons are lexicographic only; we are not implying underlying
-# concepts are equal if codes come from different versions.
-(==)(icd::AbstractICD10, icd2::AbstractICD10) = icd.ANN == icd2.ANN && icd.NN == icd2.NN
+Base.show(io::IO, icd::T) where {T<:AbstractICD10} = print(io, icd)
 
-function (==)(str::String, icd::AbstractICD10)
-  occursin(".", str) ? str == string(icd, true) : str == string(icd, false)
-end
-(==)(icd::AbstractICD10, str::String) = str == icd
+Base.isless(icd::AbstractICD10, icd2::AbstractICD10) =
+(icd.ANN..., icd.N4, icd.N5) < (icd2.ANN..., icd2.N4, icd2.N5)
 
-Base.isless(icd1::AbstractICD10, icd2::AbstractICD10) =
-  icd1.ANN < icd2.ANN || icd1.ANN == icd2.ANN && icd1.NN < icd2.NN
-Base.isless(str::String, icd::AbstractICD10) = isless(str, string(icd))
-Base.isless(icd::AbstractICD10, str::String) = isless(string(icd), str)
+Base.length(icd::T) where {T<:AbstractICD10} = icd.level
 
-"""
-    string(icdcode)
-    string(icdcode, false)
-
-Convert an ICD10 code to a string. Output will have punctuation unless `false` is passed as second argument.
-"""
-Base.string(icd::AbstractICD10, punct = true) =
-  punct ? icd.ANN * "." * icd.NN : icd.ANN * icd.NN
-
-Base.show(io::IO, icd::AbstractICD10) = print(io, icd.ANN * "." * icd.NN)
-
-Base.startswith(icd::AbstractICD10, s) = startswith(string(icd), s)
-
+Base.:(==)(icd1::AbstractICD10, icd2::AbstractICD10) = (icd1.ANN..., icd1.N4, icd1.N5) == (icd2.ANN..., icd2.N4, icd2.N5)
 ## ICD10 functions #####
 
 """
@@ -38,11 +34,20 @@ Base.startswith(icd::AbstractICD10, s) = startswith(string(icd), s)
 
 Takes an AbstractICD10 and compares it with a list of valid codes.
 """
-isvalidcode(icd::AbstractICD10, validcodes) = icd in validcodes
+isvalidcode(icd::T, validcodes) where {T<:AbstractICD10} = icd in validcodes
 
 """
     icd3(icdcode)
 
-Returns the initial 3-digits of an ICD10 code as a string.
+Returns the initial 3 digits of an ICD10 code as NTuple{3,UInt8}. Use for
+comparing codes just on first 3 digits.
 """
 icd3(icdcode::T) where {T<:AbstractICD10} = icdcode.ANN
+
+"""
+    icd4(icdcode)
+
+Returns the initial 4 digits of an ICD10 code as NTuple{4,UInt8}. Use for
+comparing codes just on first 4 digits.
+"""
+icd4(icdcode::T) where {T<:AbstractICD10} = (icdcode.ANN..., icdcode.N4)

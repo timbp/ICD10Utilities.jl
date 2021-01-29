@@ -1,25 +1,38 @@
 for t in (:ICD10AM, :ICD10CA, :ICD10CM, :ICD10GM)
   @eval begin
     struct $t <: AbstractICD10
-      ANN::String
-      NN::String
+      level::Int8
+      ANN::NTuple{3,UInt8}
+      N4::UInt8
+      N5::UInt8
     end
 
-    function $t(ANNx::String, punct = true, validateinput = false)
+    function $t(str, validateinput = false)
+      punct = occursin(".", str) ? true : false
       if validateinput
-        validicd10input(ANNx, punct) || throw(
+        valid $tinput(str, punct) || throw(
           DomainError(
-            (ANNx, punct),
-            "ICD-10 codes must have format `ANN[.][N[N]], where `A` is a letter A-Z, `N` is a decimal digit, and parts in brackets are optional",
+            str,
+            "ICD-10 codes should have format `ANN[.][N[N]]` where `A` is letter A-Z, `N` is decimal digit, and parts in brackets are optional",
           ),
         )
       end
-      ANN = SubString(ANNx, 1:3)
-      NN = punct ? SubString(ANNx, 5:lastindex(ANNx)) : SubString(ANNx, 4:lastindex(ANNx))
-      $t(ANN, NN)
-    end
+      ANN = str[1:3]
+      level = punct ? length(str) - 1 : length(str)
+      ch4 = punct ? 5 : 4
 
-    $t(icd::T) where {T<:AbstractICD10} = $t(icd.ANN, icd.NN)
+      if level == 3
+        return $t(level, NTuple{3,UInt8}.(ANN), UInt8(0), UInt8(0))
+      elseif level == 4
+        return $t(level, NTuple{3,UInt8}.(ANN), UInt8(str[ch4]), UInt8(0))
+      elseif level == 5
+        return $t(level, NTuple{3,UInt8}.(ANN), UInt8(str[ch4]), UInt8(str[ch4+1]))
+      else
+        throw(
+          DomainError(str, "ICD-10 codes should be 3-5 characters excluding the period"),
+        )
+      end
+    end
   end
 end
 

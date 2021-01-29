@@ -2,30 +2,29 @@ using Test
 using ICD10Utilities
 @testset "ICD-10" begin
   @testset "ICD10" begin
-    @test_throws DomainError ICD10("A00.000", true, true)
-    @test_throws DomainError ICD10("A00.A", true, true)
-    @test_throws DomainError ICD10("000.00", true, true)
-    @test_throws DomainError ICD10("A00000", false, true)
-    @test_throws DomainError ICD10("A00A", false, true)
-    @test_throws DomainError ICD10("00000", false, true)
+    @test_throws DomainError ICD10("A00.000", true)
+    @test_throws DomainError ICD10("A00.A", true)
+    @test_throws DomainError ICD10("000.00", true)
+    ICDOPTS[:punct] = false
+    @test_throws DomainError ICD10("A00000",  true)
+    @test_throws DomainError ICD10("A00A",  true)
+    @test_throws DomainError ICD10("00000",  true)
+    ICDOPTS[:punct] = true
 
     @test ICD10("A00") < ICD10("A00.01")
     @test ICD10("A00.01") < ICD10("A0002")
-    @test ICD10("A00") < "A00.01"
-    @test ICD10("A00.01") < "A0002"
 
     @test ICD10("A00.01") == ICD10("A00.01")
-    @test ICD10("A00.01") == "A00.01"
-    @test ICD10("A00.01") == "A0001"
 
-    @test ICD10("A00.01") != "A000"
+    @test string(ICD10("A0000")) == "A00.00"
+    @test string(ICD10("A0000")) == "A00.00"
 
-    @test string(ICD10("A00", "00")) == "A00.00"
-    @test string(ICD10("A00", "00"); punct = true) == "A00.00"
-    @test string(ICD10("A00", "00"); punct = false) != "A00.00"
-    @test string(ICD10("A00", "00"); punct = false) == "A0000"
+    ICDOPTS[:punct] = false
+    @test string(ICD10("A0000")) != "A00.00"
+    @test string(ICD10("A0000")) == "A0000"
+    ICDOPTS[:punct] = true
 
-    @test isvalidcode(ICD10("A00"), ["A00.01", "A00.02", "A00"])
+    @test isvalidcode(ICD10("A00"), ICD10["A00.01", "A00.02", "A00"])
   end
   @testset "Other ICD-10 versions" begin
     @test isdefined(ICD10Utilities, :ICD10AM)

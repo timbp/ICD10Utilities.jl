@@ -5,35 +5,46 @@
 An ICD-10 code.
 """
 struct ICD10 <: AbstractICD10
-  ANN::String
-  NN::String
+  level::Int8
+  ANN::NTuple{3,UInt8}
+  N4::UInt8
+  N5::UInt8
 end
 
 """
-    ICD10(ANNx::String, punct=true, validateinput = false)
+    ICD10(ANNx::String, alidateinput = false)
 
 Create an ICD-10 code from a string.
 
 ICD-10 codes have the form `ANN[.][N[N]]` where `A` is a letter A-Z and
 `N` is a digit 0-9. Parts in brackets are optional.
 
-If `punct=false` then the `.` is assumed not present.
-
 If `validateinput=true` then the input string is checked for valid format using
-a regex. This takes 2–3 times as long as not checking.
+a regex.
 """
-function ICD10(ANNx::String, punct = true, validateinput = false)
+function ICD10(str, validateinput = false)
+  punct = occursin(".", str) ? true : false
   if validateinput
-    validicd10input(ANNx, punct) || throw(
+    validICD10input(str, punct) || throw(
       DomainError(
-        (ANNx, punct),
-        "ICD-10 codes must have format `ANN[.][N[N]], where `A` is a letter A-Z, `N` is a decimal digit, and parts in brackets are optional",
+        str,
+        "ICD-10 codes should have format `ANN[.][N[N]]` where `A` is letter A-Z, `N` is decimal digit, and parts in brackets are optional",
       ),
     )
   end
-  ANN = SubString(ANNx, 1, 3)
-  NN = punct ? SubString(ANNx, 5) : SubString(ANNx, 4)
-  ICD10(ANN, NN)
+  ANN = str[1:3]
+  level = punct ? length(str) - 1 : length(str)
+  ch4 = punct ? 5 : 4
+
+  if level == 3
+    return ICD10(level, NTuple{3,UInt8}.(ANN), UInt8(0), UInt8(0))
+  elseif level == 4
+    return ICD10(level, NTuple{3,UInt8}.(ANN), UInt8(str[ch4]), UInt8(0))
+  elseif level == 5
+    return ICD10(level, NTuple{3,UInt8}.(ANN), UInt8(str[ch4]), UInt8(str[ch4+1]))
+  else
+    throw(DomainError(str, "ICD-10 codes should be 3-5 characters excluding the period"))
+  end
 end
 
 """
@@ -43,4 +54,12 @@ Create an ICD-10 code from another type of ICD-10 code.
 
 Note this just changes the type. It does not translate concepts between versions.
 """
-ICD10(icd::T) where {T<:AbstractICD10} = ICD10(icd.ANN, icd.NN)
+ICD10(icd::T) where {T<:AbstractICD10} = ICD10(icd.level, icd.ANN, icd.N4, icd.N5)
+
+
+function validICD10input(str::String, punct)
+  icdfmt =
+    punct ? r"^[[:upper:]][[:digit:]]{2}\.[[:digit:]]{1,2}$" :
+    r"^[[:upper:]][[:digit:]]{2}[[:digit:]]{1,2}$"
+  return occursin(icdfmt, str)
+end
