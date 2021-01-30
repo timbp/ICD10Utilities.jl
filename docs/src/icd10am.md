@@ -36,7 +36,6 @@ ACHI
 ACHI(::String)
 ICD10Utilities.importachicodes
 isvalidcode(::ACHI)
-Base.string(::ACHI)
 ```
 
 ## Code lists

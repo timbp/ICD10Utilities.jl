@@ -32,24 +32,22 @@ An ICD-10 code can be created from a string using [`ICD10("A00.1")`](@ref
 ICD10). Similar constructors exist for the country-specific versions (e.g.
 [`ICD10AM("A00.1")`](@ref ICD10AM(::String))).
 
-Some databases store ICD-10 codes as strings without the `.`. In this case, you
-can pass a second argument `false` to indicate that punctuation is not used
-(e.g. [`ICD10AM("A001", false)`](@ref ICD10AM(::String))). If you do not set the
-second argument correctly for your input, you wiil get wrong codes as output.
+Some databases store ICD-10 codes as strings without the `.`. The constructor
+will recognise this and correctly parse the string as an ICD-10 code.
 
-You can also validate the input format by passing a third argument (e.g.
-[`ICD10CA("A00.1", true, true)`](@ref ICD10CA(::String))). This will usually not
+You can also validate the input format by passing a second argument (e.g.
+[`ICD10CA("A00.1", true)`](@ref ICD10CA(::String))). This will usually not
 be necessary as in most cases codes will be obtained from a health database and
-so will already have been validated. It is much slower to validate the input
+so will already have been validated. It is  slower to validate the input
 format.
 
 ## Types
 
 ```@docs
+AbstractICD10
 ICD10
 ICD10AM
 ICD10CA
-ICD10CM
 ICD10GM
 ```
 
@@ -62,10 +60,15 @@ ICD10AM(::String)
 ICD10AM(::AbstractICD10)
 ICD10CA(::String)
 ICD10CA(::AbstractICD10)
-ICD10CM(::String)
-ICD10CM(::AbstractICD10)
 ICD10GM(::String)
 ICD10GM(::AbstractICD10)
-Base.string(::AbstractICD10)
 isvalidcode(icd::AbstractICD10, validcodes)
+icd3(::AbstractICD10)
+icd4(::AbstractICD10)
+seticdpunct(::Bool)
+```
+
+## Options
+```@docs
+ICDOPTS
 ```
