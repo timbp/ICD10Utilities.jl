@@ -5,58 +5,49 @@
 An ACHI (Australian Classification of Health Interventions) code.
 """
 struct ACHI
-  NNNNN::String
-  NN::String
+  data::NTuple{7,UInt8}
 end
 
-function validachiinput(NNNNNNN, punct = true)
+function validachiinput(str, punct)
   achifmt = punct ? r"^[[:digit:]]{5}-[[:digit:]]{2}$" : r"^[[:digit:]]{5}[[:digit:]]{2}$"
-  return occursin(achifmt, NNNNNNN)
+  return occursin(achifmt, str)
 end
 
 """
-    ACHI(NNNNNx::String, punct=true, validateinput=false)
+    ACHI(str::String, validateinput=false)
 
 Create an ACHI code from a string.
 
 ACHI codes consist of 7 digits (0-9), usually with a hypen after the first 5 digits.
 
-If `punct=false` then the input is assumed to be simply 7 decimal digits.
-
-If `validateinput=true` then the input is checked using a regex and returns a DomainError
-if the format is not correct. Note this only checks the input format; it does not
+If `validateinput=true` then the input is checked using a regex. Note this only checks the input format; it does not
 check if the code actually exists in ACHI.
 """
-function ACHI(NNNNNx::String, punct = true, validateinput = false)
+function ACHI(str::String, validateinput = false)
+  punct = occursin("-", str) ? true : false
   if validateinput
-    validachiinput(NNNNNx, punct) || throw(
+    validachiinput(str, punct) || throw(
       DomainError(
-        NNNNNx,
-        "ACHI codes must have format `NNNNN-NN` where `N` is a decimal digit. The hyphen can be omitted (but then set `punct=false`)",
+        str,
+        "ACHI codes should have format `NNNNN-NN` where `N` is a decimal digit. The hyphen can be omitted.",
       ),
     )
   end
-  NNNNN = SubString(NNNNNx, 1, 5)
-  NN = punct ? SubString(NNNNNx, 7) : SubString(NNNNNx, 6)
-  ACHI(NNNNN, NN)
+  ch6 = punct ? 7 : 6
+  return ACHI((NTuple{5,UInt8}.(str[1:5])..., NTuple{2,UInt8}.(str[ch6:end])...))
 end
 
 ## ACHI Base functions #####
-(==)(str::String, achi::ACHI) =
-  occursin("-", str) ? str == string(achi, true) : str == string(achi, false)
-(==)(achi::ACHI, str::String) = str == achi
 
-"""
-    string(achi::ACHI, punct = true)
+function Base.print(io::IO, achi::ACHI, punct = ICDOPTS[:punct])
+  if punct
+    write(io, Ref(achi.data[1:5]), "-", Ref(achi.data[6:7]))
+  else
+    write(io, Ref(achi))
+  end
+end
 
-Convert an ACHI code to a string.
-
-If `punct = false` then omit the hyphen ("NNNNNNN" instead of "NNNNN-NN")
-"""
-Base.string(achi::ACHI, punct = true) =
-  punct ? achi.NNNNN * "-" * achi.NN : achi.NNNNN * achi.NN
-
-Base.show(io::IO, achi::ACHI) = print(io, achi.NNNNN * "-" * achi.NN)
+Base.show(io::IO, achi::ACHI) = print(io, achi, ICDOPTS[:punct])
 
 ## Supporting types #####
 """

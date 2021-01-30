@@ -36,20 +36,19 @@ end
 
 @testset "ICD10AM/ACHI" begin
   @testset "ACHI" begin
-    @test_throws DomainError ACHI("12345-678", true, true)
-    @test_throws DomainError ACHI("12345678", false, true)
-    @test_throws DomainError ACHI("A2345-67", true, true)
-    @test_throws DomainError ACHI("A234567", false, true)
-    @test_throws DomainError ACHI("1234-567", true, true)
+    @test_throws DomainError ACHI("12345-678", true)
+    @test_throws DomainError ACHI("12345678", true)
+    @test_throws DomainError ACHI("A2345-67", true)
+    @test_throws DomainError ACHI("A234567", true)
+    @test_throws DomainError ACHI("1234-567", true)
 
-    @test ACHI("12345-67", true) == ACHI("1234567", false)
-    @test ACHI("12345-67", true) == "1234567"
-    @test ACHI("12345-67", true) == "12345-67"
-    @test "1234567" == ACHI("12345-67", true)
+    @test ACHI("12345-67") == ACHI("1234567")
 
-    @test string(ACHI("12345-67", true)) == "12345-67"
-    @test string(ACHI("12345-67", true), true) == "12345-67"
-    @test string(ACHI("12345-67", true), false) == "1234567"
+    ICDOPTS[:punct] = true
+    @test string(ACHI("12345-67")) == "12345-67"
+    ICDOPTS[:punct] = false
+    @test string(ACHI("12345-67")) == "1234567"
+    ICDOPTS[:punct] = true
   end
 
   @testset "ICD10AM age coding" begin
@@ -60,14 +59,12 @@ end
   @testset "ICD10AM/ACHI functions requiring electronic codes lists" begin
     if isdefined(ICD10Utilities, :_ICD10AMcodes_)
       @test isvalidcode(ICD10AM("A00.1"))
-      @test isvalidcode(ICD10AM("A001", false))
       @test !isvalidcode(ICD10AM("A00"))
     else
       @test_throws ErrorException isvalidcode(ICD10AM("A00.1"))
     end
     if isdefined(ICD10Utilities, :_ACHIcodes_)
       @test isvalidcode(ACHI("10801-00"))
-      @test isvalidcode(ACHI("1080100", false))
       @test !isvalidcode(ACHI("12345-67"))
     else
       @test_throws ErrorException isvalidcode(ACHI("10801-00"))

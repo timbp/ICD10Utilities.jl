@@ -6,7 +6,7 @@ Import the ICD-10-AM electronic code lists into the package.
 Electronic code lists can be obtained from the [Independent Hospital Pricing
 Authority](https://www.ihpa.gov.au/what-we-do/icd-10-am-achi-acs-classification).
 
-This function just imports the `disease.txt` table.
+This function just imports the `disease.txt` table. Provide the path to the `disease.txt` file.
 """
 function importicd10amcodes(fname)
   icdcodes = CSV.File(fname)
@@ -79,7 +79,7 @@ Import the ACHI electronic code lists into the package.
 Electronic code lists can be obtained from the [Independent Hospital Pricing
 Authority](https://www.ihpa.gov.au/what-we-do/icd-10-am-achi-acs-classification).
 
-This function just imports the `interven.txt` table.
+This function just imports the `interven.txt` table. Provide the path to the `interven.txt` file.
 """
 function importachicodes(fname)
   achicodes = CSV.File(fname)
