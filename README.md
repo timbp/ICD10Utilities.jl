@@ -3,6 +3,8 @@
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://timbp.github.io/ICD10Utilities.jl/dev)
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://timbp.github.io/ICD10Utilities.jl/stable)
 
+[![DOI](https://zenodo.org/badge/332645049.svg)](https://zenodo.org/badge/latestdoi/332645049)
+
 
 The _International Classification of Diseases and Other Health Related Problems, Tenth Revision_ (ICD-10)
 is commonly used for coding diagnoses in health data.
