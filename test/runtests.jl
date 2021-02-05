@@ -5,33 +5,41 @@ using ICD10Utilities
     @test_throws DomainError ICD10("A00.000", true)
     @test_throws DomainError ICD10("A00.A", true)
     @test_throws DomainError ICD10("000.00", true)
-    ICDOPTS[:punct] = false
-    @test_throws DomainError ICD10("A00000",  true)
-    @test_throws DomainError ICD10("A00A",  true)
-    @test_throws DomainError ICD10("00000",  true)
-    ICDOPTS[:punct] = true
+    @test_throws DomainError ICD10("A00000", true)
+    @test_throws DomainError ICD10("A00A", true)
+    @test_throws DomainError ICD10("00000", true)
 
     @test ICD10("A00") < ICD10("A00.01")
     @test ICD10("A00.01") < ICD10("A0002")
 
-    @test ICD10("A00.01") == ICD10("A00.01")
+    @test ICD10("A00.01") == ICD10("A0001")
 
-    @test string(ICD10("A0000")) == "A00.00"
+    @test string(ICD10("A00.00")) == "A00.00"
     @test string(ICD10("A0000")) == "A00.00"
 
     ICDOPTS[:punct] = false
-    @test string(ICD10("A0000")) != "A00.00"
+    @test string(ICD10("A00.00")) != "A00.00"
     @test string(ICD10("A0000")) == "A0000"
     ICDOPTS[:punct] = true
 
     @test isvalidcode(ICD10("A00"), ICD10["A00.01", "A00.02", "A00"])
   end
+
   @testset "Other ICD-10 versions" begin
     @test isdefined(ICD10Utilities, :ICD10AM)
     @test isdefined(ICD10Utilities, :ICD10CA)
-    @test_broken isdefined(ICD10Utilities, :ICD10CM)
     @test isdefined(ICD10Utilities, :ICD10GM)
   end
+end
+
+@testset "ICD-10-CM" begin
+  @test isdefined(ICD10Utilities, :ICD10CM)
+  @test_throws DomainError ICD10CM("A00.00000", true)
+  @test string(ICD10CM("C441092")) == "C44.1092"
+  ICDOPTS[:punct] = false
+  @test string(ICD10CM("C44.1092")) == "C441092"
+  ICDOPTS[:punct] = true
+  @test string(ICD10(ICD10CM("C441092"))) == "C44.10"
 end
 
 @testset "ICD10AM/ACHI" begin

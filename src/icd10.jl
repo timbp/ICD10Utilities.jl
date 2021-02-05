@@ -55,7 +55,6 @@ Note this just changes the type. It does not translate concepts between versions
 """
 ICD10(icd::T) where {T<:AbstractICD10} = ICD10(icd)
 
-
 function validICD10input(str::String, punct)
   icdfmt =
     punct ? r"^[[:upper:]][[:digit:]]{2}\.[[:digit:]]{1,2}$" :

@@ -8,10 +8,14 @@ Base.print(io::IO, icd::T, punct = ICDOPTS[:punct]) where {T<:AbstractICD10} =
       write(io, Ref(icd.data[1:3]), '.', Ref(icd.data[4]))
     elseif icd.level == 5
       write(io, Ref(icd.data[1:3]), '.', Ref(icd.data[4:5]))
+    elseif icd.level == 6
+      write(io, Ref(icd.data[1:3]), '.', Ref(icd.data[4:6]))
+    elseif icd.level == 7
+      write(io, Ref(icd.data[1:3]), '.', Ref(icd.data[4:7]))
     end
   else
-     write(io, Ref(icd.data[1:icd.level]))
-    end
+    write(io, Ref(icd.data[1:icd.level]))
+  end
 
 Base.show(io::IO, icd::T) where {T<:AbstractICD10} = print(io, icd)
 
@@ -19,7 +23,8 @@ Base.isless(icd1::AbstractICD10, icd2::AbstractICD10) = icd1.data < icd2.data
 
 Base.length(icd::T) where {T<:AbstractICD10} = icd.level
 
-Base.:(==)(icd1::AbstractICD10, icd2::AbstractICD10) = icd1.level == icd2.level && icd1.data == icd2.data
+Base.:(==)(icd1::AbstractICD10, icd2::AbstractICD10) =
+  icd1.level == icd2.level && icd1.data == icd2.data
 
 ## ICD10 functions #####
 
