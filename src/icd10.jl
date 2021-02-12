@@ -25,7 +25,7 @@ a regex.
 function ICD10(str::AbstractString, validateinput = false)
   punct = occursin(".", str) ? true : false
   if validateinput
-    validICD10input(str, punct) || throw(
+    validICD10input(str) || throw(
       DomainError(
         str,
         "ICD-10 codes should have format `ANN[.][N[N]]` where `A` is letter A-Z, `N` is decimal digit, and parts in brackets are optional",
@@ -55,9 +55,7 @@ Note this just changes the type. It does not translate concepts between versions
 """
 ICD10(icd::T) where {T<:AbstractICD10} = ICD10(icd)
 
-function validICD10input(str::String, punct)
-  icdfmt =
-    punct ? r"^[[:upper:]][[:digit:]]{2}\.[[:digit:]]{1,2}$" :
-    r"^[[:upper:]][[:digit:]]{2}[[:digit:]]{1,2}$"
+function validICD10input(str)
+  icdfmt = r"^[[:upper:]][[:digit:]]{2}(\.){0,1}([[:digit:]]{1,2}){0,1}$"
   return occursin(icdfmt, str)
 end

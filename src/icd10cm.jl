@@ -25,7 +25,7 @@ a regex.
 function ICD10CM(str::AbstractString, validateinput = false)
   punct = occursin(".", str) ? true : false
   if validateinput
-    validICD10CMinput(str, punct) || throw(
+    validICD10CMinput(str) || throw(
       DomainError(
         str,
         "ICD-10-CM codes should have format `ANC[.][C[C[C[C]]]]` where `A` is a letter A-Z, `N` is a digit 0-9, and `C` is a letter or digit, and parts in brackets are optional",
@@ -144,9 +144,7 @@ Note this just changes the type. It does not translate concepts between versions
 """
 ICD10GM(icd::ICD10CM) = ICD10GM(min(icd.level, 5), icd.data[1:5])
 
-function validICD10CMinput(str::String, punct)
-  icdfmt =
-    punct ? r"^[[:upper:]][[:digit:]][[:upper:][:digit:]]\.[[:upper:][:digit:]]{1,4}$" :
-    r"^[[:upper:]][[:digit:]][[:upper:][:digit:]]{1,5}$"
+function validICD10CMinput(str)
+  icdfmt = r"^[[:upper:]][[:digit:]][[:upper:][:digit:]](\.){0,1}([[:upper:][:digit:]]{1,4}){0,1}$"
   return occursin(icdfmt, str)
 end

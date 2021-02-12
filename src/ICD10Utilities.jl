@@ -11,6 +11,7 @@ export AbstractICD10
 export ICD10
 export ICD10AM, ACHI
 export ICD10CA, ICD10CM, ICD10GM
+export ICD10CM
 export ICD10AMAge
 export icd3
 export isvalidcode

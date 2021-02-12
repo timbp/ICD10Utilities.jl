@@ -8,7 +8,7 @@ for t in (:ICD10AM, :ICD10CA, :ICD10GM)
     function $t(str::AbstractString, validateinput = false)
       punct = occursin(".", str) ? true : false
       if validateinput
-        validICD10input(str, punct) || throw(
+        validICD10input(str) || throw(
           DomainError(
             str,
             "ICD-10 codes should have format `ANN[.][N[N]]` where `A` is letter A-Z, `N` is decimal digit, and parts in brackets are optional",
