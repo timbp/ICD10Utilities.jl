@@ -17,7 +17,12 @@ Base.print(io::IO, icd::T, punct = ICDOPTS[:punct]) where {T<:AbstractICD10} =
     write(io, Ref(icd.data[1:icd.level]))
   end
 
-Base.show(io::IO, icd::T) where {T<:AbstractICD10} = print(io, icd)
+Base.show(
+  io::IO,
+  ::MIME"text/plain",
+  icd::T,
+  punct = ICDOPTS[:punct],
+) where {T<:AbstractICD10} = print(io, icd)
 
 Base.isless(icd1::AbstractICD10, icd2::AbstractICD10) = icd1.data < icd2.data
 
