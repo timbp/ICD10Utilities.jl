@@ -43,6 +43,14 @@ end
 end
 
 @testset "ICD10AM/ACHI" begin
+  @testset "ICD10AM" begin
+    @test_throws DomainError ICD10("A00.000", true)
+    @test_throws DomainError ICD10("A00.A", true)
+    @test_throws DomainError ICD10("000.00", true)
+    @test_throws DomainError ICD10("A00000", true)
+    @test_throws DomainError ICD10("A00A", true)
+    @test_throws DomainError ICD10("00000", true)
+  end
   @testset "ACHI" begin
     @test_throws DomainError ACHI("12345-678", true)
     @test_throws DomainError ACHI("12345678", true)
