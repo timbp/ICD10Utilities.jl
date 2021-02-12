@@ -8,8 +8,8 @@ struct ACHI
   data::NTuple{7,UInt8}
 end
 
-function validachiinput(str, punct)
-  achifmt = punct ? r"^[[:digit:]]{5}-[[:digit:]]{2}$" : r"^[[:digit:]]{5}[[:digit:]]{2}$"
+function validachiinput(str)
+  achifmt = r"^[[:digit:]]{5}(-){0,1}[[:digit:]]{2}$"
   return occursin(achifmt, str)
 end
 
@@ -26,7 +26,7 @@ check if the code actually exists in ACHI.
 function ACHI(str::String, validateinput = false)
   punct = occursin("-", str) ? true : false
   if validateinput
-    validachiinput(str, punct) || throw(
+    validachiinput(str) || throw(
       DomainError(
         str,
         "ACHI codes should have format `NNNNN-NN` where `N` is a decimal digit. The hyphen can be omitted.",
@@ -47,7 +47,9 @@ function Base.print(io::IO, achi::ACHI, punct = ICDOPTS[:punct])
   end
 end
 
-Base.show(io::IO, achi::ACHI) = print(io, achi, ICDOPTS[:punct])
+Base.show(io::IO, ::MIME"text/plain", achi::ACHI) = print(io, achi, ICDOPTS[:punct])
+
+Base.convert(::Type{T}, x::AbstractString) where {T<:ACHI} = T(x)
 
 ## Supporting types #####
 """
