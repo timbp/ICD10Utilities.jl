@@ -17,7 +17,7 @@ export icd3
 export isvalidcode
 export icd3, icd4
 export seticdpunct
-
+export ICDO3
 export ICD10AMcodes, ACHIcodes
 
 """
@@ -52,5 +52,6 @@ include("othericd10.jl")
 include("icd10cm.jl")
 include("achi.jl")
 include("icd10amfns.jl")
+include("icdO3.jl")
 
 end # module
